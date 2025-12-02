@@ -1,5 +1,5 @@
 import Card from "../../shared/components/Card";
-import { getProducts } from "../../products/services/list"; 
+import { getProducts } from "../../products/services/products"; 
 import { useEffect, useState } from "react";
 import { getOrders } from "../../orders/services/listOrders";
 import { useCallback } from "react";

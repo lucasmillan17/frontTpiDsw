@@ -3,6 +3,7 @@ import { useForm, Controller, useWatch } from "react-hook-form";
 import { useEffect, useCallback } from "react";
 import { getOrders } from "../services/listOrders.js";
 import { useState } from "react";
+import OrderCard from "../components/OrderCard";
 
 function ListOrdersPage() {
 
@@ -47,8 +48,8 @@ function ListOrdersPage() {
     };
 
     return (
-        <div className="flex flex-col h-lvh justify-start gap-4"> {/* full viewport height, columna */}
-            <Card className="flex flex-col gap-4"> {/* header / filtros queda fijo */}
+        <div className="flex flex-col h-full min-h-0 justify-start gap-4"> 
+             <Card className="flex flex-col gap-4 min-h-0"> 
                 <form className="flex flex-col gap-4">
                     <div className="flex justify-between items-center">
                         <span className="font-bold">Ordenes</span>
@@ -87,16 +88,15 @@ function ListOrdersPage() {
                 </form>
             </Card>
 
-            <div className="flex-1 overflow-auto p-2 space-y-4 bg-transparent">
-                {orders.map(order => (
-                    <Card key={order.orderId}>
-                        <div className="flex flex-col gap-2">
-                          <span className="font-bold">{order.orderId} - {order.customerName}</span>
-                          <span>{order.stockQuantity} - {statusMap[order.status] ?? order.status}</span>
-                        </div>
-                    </Card>
-                ))}
-            </div>
+            <div className="flex-1 min-h-0 overflow-auto space-y-4 bg-transparent">
+                 {orders.map(order => (
+                     <OrderCard
+                         key={order.orderId}
+                         order={order}
+                         statusMap={statusMap}
+                     />
+                 ))}
+             </div>
         </div>
     );
 }

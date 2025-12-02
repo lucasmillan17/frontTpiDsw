@@ -1,8 +1,10 @@
 import Card from "../../shared/components/Card";
 import { useForm, Controller, useWatch } from "react-hook-form";
 import { useEffect, useCallback } from "react";
-import { getProducts } from "../services/list.js";
+import { getProducts } from "../services/products.js";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import ProductCard from "../components/ProductCard";
 
 function ListProductsPage() {
 
@@ -10,7 +12,7 @@ function ListProductsPage() {
     const [ products, setProducts ] = useState([]);
 
     const [loading, setLoading] = useState(false);
-
+    const navigate = useNavigate();
     const {
         register,
         control,
@@ -50,13 +52,13 @@ function ListProductsPage() {
     };
 
     return (
-        <div className="flex flex-col h-lvh justify-start gap-4"> {/* full viewport height, columna */}
+        <div className="flex flex-col h-full min-h-0 justify-start gap-4">
             <Card className="flex flex-col gap-4"> {/* header / filtros queda fijo */}
                 <form className="flex flex-col gap-4">
                     <div className="flex justify-between items-center">
                         <span className="font-bold">Productos</span>
-                        <button className="hidden sm:block text-sm p-2">Crear Producto</button>
-                        <button className="sm:hidden text-sm">
+                        <button className="hidden sm:block text-sm p-2" onClick={() => navigate('/admin/products/create')}>Crear Producto</button>
+                        <button className="sm:hidden text-sm" onClick={() => navigate('/admin/products/create')}>
                             <img
                                 src="https://www.svgrepo.com/show/521942/add-ellipse.svg"
                                 alt="add"
@@ -97,20 +99,18 @@ function ListProductsPage() {
                     </div>
                 </form>
             </Card>
-
-            {/* área scrollable: ocupa el resto de la altura y hace scroll sólo aquí */}
-            <div className="flex-1 overflow-auto p-2 space-y-4 bg-transparent">
-                {products.map(product => (
-                    <Card key={product.productId}>
-                        <div className="flex flex-col gap-2">
-                          <span className="font-bold">{product.sku} - {product.name}</span>
-                          <span>{product.stockQuantity} - {statusMap[product.status] ?? product.status}</span>
-                        </div>
-                    </Card>
-                ))}
-            </div>
-        </div>
-    );
-}
-
-export default ListProductsPage;
+ 
+            <div className="flex-1 min-h-0 overflow-auto space-y-4 bg-transparent">
+                 {products.map(product => (
+                     <ProductCard
+                         key={product.productId}
+                         product={product}
+                         statusMap={statusMap}
+                     />
+                 ))}
+             </div>
+         </div>
+     );
+ }
+ 
+ export default ListProductsPage;

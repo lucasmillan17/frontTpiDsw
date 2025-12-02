@@ -42,6 +42,8 @@ function DashboardPageAdmin(){
             gap-4
             p-3
             text-base
+            overflow-hidden
+            min-h-0
             "
         >
             
@@ -79,7 +81,8 @@ function DashboardPageAdmin(){
                 justify-between
                 p-4
                 items-center
-                text-xl">
+                text-xl
+                sticky">
                     <h1 className="pl-10">Administrador</h1>
                     <div className="hidden sm:block">
                         <button onClick={logout} className="sm:text-sm p-2 bg-gray-100 border-gray-200 rounded-lg hover:bg-gray-200">
@@ -94,7 +97,8 @@ function DashboardPageAdmin(){
             <main className="[grid-area:content]
                 bg-neutral-100
                 pl-2
-                h-full">
+                overflow-hidden
+                min-h-0">
                     <Outlet/>
             </main>
         </div>

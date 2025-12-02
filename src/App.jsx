@@ -1,4 +1,3 @@
-
 import LoginPage from './modules/auth/pages/LoginPage.jsx'
 import RegisterPage from './modules/auth/pages/RegisterPage.jsx'
 import DashboardPageAdmin from './modules/templates/pages/DashboardPageAdmin.jsx';
@@ -10,10 +9,21 @@ import CreateProductsPage from './modules/products/pages/CreateProductsPage.jsx'
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import {Toaster} from 'react-hot-toast';
 import HomePage from './modules/home/pages/HomePage.jsx';
+import AdminHomePage from './modules/home/pages/AdminHomePage.jsx';
+import CartPage from './modules/cart/pages/CartPage.jsx';
 import './App.css'
+import { CartProvider } from './modules/cart/context/CartProvider.jsx';
 
 function App() {
   const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <HomePage />
+    },
+    {
+      path: "/cart",
+      element: <CartPage />
+    },
     {
       path: "/login",
       element: <LoginPage />
@@ -43,7 +53,7 @@ function App() {
         },
         {
           path: "home",
-          element: <HomePage/>
+          element: <AdminHomePage/>
         }
       ],
     },
@@ -52,8 +62,10 @@ function App() {
   return (
     <>
       <AuthProvider>
-        <Toaster position="top-right" />
-        <RouterProvider router={router} />
+        <CartProvider>
+          <Toaster position="top-right" />
+          <RouterProvider router={router} />
+        </CartProvider>
       </AuthProvider>
     </>
   );

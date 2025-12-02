@@ -4,7 +4,7 @@ import { useEffect, useCallback } from "react";
 import { getProducts } from "../services/products.js";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import ProductCard from "../components/ProductCard";
+import ProductCard from "../components/ProductCard.jsx";
 
 function ListProductsPage() {
 

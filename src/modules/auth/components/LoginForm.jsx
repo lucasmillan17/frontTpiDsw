@@ -19,15 +19,18 @@ function LoginForm() {
     const { signin } = useAuth();
 
     const onValid = async (formData) => {
-        const { error } = await signin(formData.username, formData.password);
+        const { error, role } = await signin(formData.username, formData.password);
 
         if (error) {
             setLoginError(error);
             return;
         }
-
         toast.success('Inicio de sesión exitoso');
-        navigate('/admin/home');
+        if (role === 'Client') {
+            navigate('/');
+        } else {
+            navigate('/admin/home');
+        }
     };
 
   return (

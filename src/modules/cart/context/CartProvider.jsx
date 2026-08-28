@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react';
 
-export const CartContext = createContext(null);
+export const CartContext = createContext();
 
 function getProductKey(p) {
   if (!p) return undefined;
@@ -8,26 +8,44 @@ function getProductKey(p) {
 }
 
 export function CartProvider({ children }) {
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState(() => {
+    const itemsCart = JSON.parse(localStorage.getItem('cartItems')) || [];
+    return itemsCart;
+  });
 
-  // load from localStorage on mount
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem('cartItems');
-      if (raw) setItems(JSON.parse(raw));
-    } catch (e) {
-      console.error('Failed to load cart from localStorage', e);
-    }
-  }, []);
+  // // load from localStorage on mount
+  // useEffect(() => {
+  //   try {
+  //     const raw = localStorage.getItem('cartItems');
+  //     console.log('Loaded cart from localStorage', raw);
+  //     if (raw) setItems(JSON.parse(raw));
+  //   } catch (e) {
+  //     console.error('Failed to load cart from localStorage', e);
+  //   }
+  // }, []);
 
-  // persist changes
-  useEffect(() => {
-    try {
-      localStorage.setItem('cartItems', JSON.stringify(items));
-    } catch (e) {
-      console.error('Failed to save cart to localStorage', e);
-    }
-  }, [items]);
+  // // persist changes
+  // useEffect(() => {
+  //   try {
+  //     const raw = localStorage.getItem('cartItems');
+  //     if (!raw) {
+  //       localStorage.setItem('cartItems', JSON.stringify(items));
+  //     }
+  //     console.log('Saved cart to localStorage', items);
+  //     console.log('cartItems', localStorage.getItem('cartItems'));
+  //   } catch (e) {
+  //     console.error('Failed to save cart to localStorage', e);
+  //   }
+  // }, [items]);
+
+  // useEffect(() => {
+  //   const itemsCart = JSON.parse(localStorage.getItem('cartItems')) || [];
+    
+  //   if (itemsCart.length && items.length === 0) 
+  //   {
+  //     setItems(itemsCart);
+  //   }
+  // }, []);
 
   function addToCart(product, qty = 1) {
     if (!product || qty <= 0) return;
@@ -61,7 +79,9 @@ export function CartProvider({ children }) {
   }
 
   function removeFromCart(productKey) {
-    setItems(prev => prev.filter(i => getProductKey(i) !== productKey));
+    const newItems = items.filter(i => getProductKey(i) !== productKey);
+    setItems(newItems);
+    localStorage.setItem(JSON.stringify(newItems))
   }
 
   function updateQuantity(productKey, quantity) {
@@ -70,6 +90,7 @@ export function CartProvider({ children }) {
 
   function clearCart() {
     setItems([]);
+    localStorage.removeItem('cartItems');
   }
 
   const totalItems = items.reduce((s, it) => s + (Number(it.quantity) || 0), 0);

@@ -1,7 +1,11 @@
 import { useForm } from "react-hook-form";
 import Input from "../../shared/components/Input.jsx";
+import { registerService } from "../services/register.js"; // <--- Importamos el nuevo servicio
+import { useNavigate } from "react-router-dom";
+import toast from 'react-hot-toast';
 
 function RegisterForm() {
+    const navigate = useNavigate();
     const {
           register,
           handleSubmit,
@@ -11,19 +15,41 @@ function RegisterForm() {
            
     const passwordValue = watch("password");
 
-    const onSubmit = (data) => {
-            console.log(data);
-        };
+    const onSubmit = async (data) => {
+        // Llamada al backend
+        const { error } = await registerService(
+            data.username, 
+            data.email, 
+            data.password, 
+            data.role,
+            data.name,
+            data.phone
+        );
+
+        if (error) {
+            console.error(error);
+            // Manejo de errores del backend (a veces vienen como array, a veces string)
+            const msg = Array.isArray(error) 
+                ? error.map(e => e.description).join(', ') 
+                : (typeof error === 'string' ? error : 'Error al registrar usuario');
+            
+            toast.error(msg);
+            return;
+        }
+
+        toast.success("Usuario registrado con éxito");
+        navigate('/login');
+    };
     
 
         return (
             <form className="flex
             flex-col
             gap-4
-            sm:gap-8
+            sm:gap-1
             p-8
             text-sm
-            sm:text-base
+            sm:text-sm
             w-full
             max-w-sm
             mx-auto
@@ -40,6 +66,20 @@ function RegisterForm() {
                 error={errors.username?.message}
                 />
 
+                <Input label='Nombre'
+                {...register('name',{
+                    required: 'Nombre obligatorio'
+                })}
+                error={errors.name?.message}
+                />
+
+                <Input label='Numero de telefono'
+                {...register('phone',{
+                    required: 'Número de teléfono obligatorio'
+                })}
+                error={errors.phone?.message}
+                />
+
                 <Input label='Email'
                 {...register('email',{
                     required: 'Email obligatorio'
@@ -54,10 +94,10 @@ function RegisterForm() {
                 <label>Rol</label>
                 <select {...register('role',
                     {required : 'Debe especificar un rol'}
-                )} className={`input-default $ {error ? 'border-red-500' : ''}`}>
+                )} className={`input-default ${errors.role ? 'border-red-500' : ''}`}>
                     <option value=""> Seleccione un rol...</option>
-                    <option value="Administrador">Administrador</option>
-                    <option value="Cliente">Cliente</option>
+                    <option value="Admin">Administrador</option>
+                    <option value="Client">Cliente</option>
                 </select>
                 {errors.role?.message && <p className="text-red-500 text-xs sm:text-sm">{errors.role?.message}</p>}
                 </div>

@@ -47,6 +47,22 @@ function ListOrdersPage() {
       all: 'Todos'
     };
 
+    // filtrar orders según el input 'search' y el select 'status'. Si search está vacío, devolver todas. Si status es 'all', no filtrar por estado.
+    const filteredOrders = orders.filter(order => {
+      const q = (searchValue || '').toString().trim().toLowerCase();
+      if (q) {
+        if (!String(order.orderId).toLowerCase().includes(q)) return false;
+      }
+
+      const s = (statusValue || 'all').toString().trim().toLowerCase();
+      if (s && s !== 'all') {
+        const orderStatus = (order.status || '').toString().trim().toLowerCase();
+        if (orderStatus !== s) return false;
+      }
+
+      return true;
+    });
+
     return (
         <div className="flex flex-col h-full min-h-0 justify-start gap-4"> 
              <Card className="flex flex-col gap-4 min-h-0"> 
@@ -63,8 +79,11 @@ function ListOrdersPage() {
                             render={({ field }) => (
                               <select {...field} className="input-default w-50">
                                 <option value="all">Filtrar por estado</option>
-                                <option value="enabled">Activo</option>
-                                <option value="disabled">Inactivo</option>
+                                <option value="pending">Pendiente</option>
+                                <option value="processing">En Proceso</option>
+                                <option value="shipped">Enviado</option>
+                                <option value="delivered">Entregado</option>
+                                <option value="canceled">Cancelado</option>
                                 <option value="all">Todos</option>
                               </select>
                             )}
@@ -78,8 +97,11 @@ function ListOrdersPage() {
                           render={({ field }) => (
                             <select {...field} className="input-default w-full">
                                 <option value="all">Filtrar por estado</option>
-                                <option value="enabled">Activo</option>
-                                <option value="disabled">Inactivo</option>
+                                <option value="pending">Pendiente</option>
+                                <option value="processing">En Proceso</option>
+                                <option value="shipped">Enviado</option>
+                                <option value="delivered">Entregado</option>
+                                <option value="canceled">Cancelado</option>
                                 <option value="all">Todos</option>
                             </select>
                           )}
@@ -89,14 +111,14 @@ function ListOrdersPage() {
             </Card>
 
             <div className="flex-1 min-h-0 overflow-auto space-y-4 bg-transparent">
-                 {orders.map(order => (
-                     <OrderCard
-                         key={order.orderId}
-                         order={order}
-                         statusMap={statusMap}
-                     />
-                 ))}
-             </div>
+                 {filteredOrders.map(order => (
+                      <OrderCard
+                          key={order.orderId}
+                          order={order}
+                          statusMap={statusMap}
+                      />
+                  ))}
+              </div>
         </div>
     );
 }

@@ -1,5 +1,6 @@
 import { createContext, useState } from 'react';
 import { login } from '../services/login';
+import toast from 'react-hot-toast';
 
 const AuthContext = createContext();
 
@@ -12,19 +13,21 @@ function AuthProvider({ children }) {
   const signout = () => {
     localStorage.clear();
     setIsAuthenticated(false);
+    toast.success('Sesión cerrada exitosamente');
   };
 
   const signin = async (username, password) => {
-    const { token, error } = await login(username, password);
+    const { token, role, customerId, error } = await login(username, password);
 
     if (error) {
       return { error };
     }
 
     localStorage.setItem('token', token);
+    localStorage.setItem('customerId', customerId);
     setIsAuthenticated(true);
 
-    return { error: null };
+    return { error: null, role };
   };
 
   return (

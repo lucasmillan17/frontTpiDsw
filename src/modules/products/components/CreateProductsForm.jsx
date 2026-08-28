@@ -12,13 +12,26 @@ function CreateProductsForm() {
 
     const navigate = useNavigate();
 
-    const onValid = async (data) => {
-        console.log(data);
-        const { error } = await createProduct(data);
+const onValid = async (data) => {
+        const payload = {
+            ...data,
+            currentUnitPrice: parseFloat(data.currentUnitPrice),
+            stockQuantity: parseInt(data.stockQuantity)
+        };
+
+        console.log("Enviando payload:", payload);
+
+        const { error } = await createProduct(payload);
+
         if (error) {
-            setErrorForm(error);
-            toast.error('Error al crear el producto: ' + error);
-        }else{
+            console.error(error);
+            const errorMessage = typeof error === 'string' 
+                ? error 
+                : (error.message || 'Error desconocido al crear el producto');
+            
+            setErrorForm(errorMessage);
+            toast.error('Error al crear el producto');
+        } else {
             toast.success('Producto creado con éxito');
             navigate('/admin/products');
         }
